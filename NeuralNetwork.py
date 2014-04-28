@@ -7,36 +7,31 @@ from cost_functions import *
 
 
 class NeuralNetwork:
-    def __init__(self, X, y, layers, alpha=0.1, test_prop=0.9, seed_parameter=1, activation_function='logistic', loss_function='squared_loss', output_function='linear'):
-
+    def __init__(self, X, y, layers, alpha=0.1, train_size=0.9, seed_parameter=1, initialization='normalized', activation_function='logistic', loss_function='squared_loss', output_function='linear'):
+	# data 
 	self.X = X
 	self.y = y
 	self.N, self.P = X.shape
-
-	self.seed = seed_parameter
-	self.layers = layers
-	
-	self.N_train = np.floor(self.N*(1-test_prop))
+	# train_test split
+	self.N_train = int(self.N*train_size)
 	self.N_test = self.N - self.N_train
-
 	row_idx = [i for i in xrange(self.N)]
 	random.shuffle(row_idx)
-	'''
 	self.X_train = self.X[row_idx[:self.N_train],:]
 	self.X_test = self.X[row_idx[self.N_train:],:]
-
 	self.y_train = self.y[row_idx[:self.N_train],:]
 	self.y_test = self.y[row_idx[self.N_train:],:]
-	'''	
-
+	# neural network architecture
+	self.layers = layers
+	self.initialization = initialization
+	# NN parameters	
 	self.W = {} # weights
 	self.b = {} # biases
 	self.alpha = alpha # learning rate
-
 	self.activation_function, self.activation_gradient = get_activation_function(activation_function)
 	self.loss_function = get_cost_function(loss_function)
 	self.output_function, self.output_gradient = get_activation_function(output_function)
-
+    # standardizing X
     def normalization(X):
 	P = X.shape[1]
 	for p in xrange(P):		
@@ -45,23 +40,27 @@ class NeuralNetwork:
 	    X[:,p]= (X[:,p] - mean)/variance 
 	return X	
 
-
+    # normalized initialization - Xavier Glorot/Yoshua Bengio 2010
     def w_initial(self, input, output):
 	return sqrt(6.0/(input+output)) 
 
     def initialize_weights(self):
+	# input layer
 	input = self.P
 	output = self.layers[0]
 	w = self.w_initial(input, output)
 	self.W[0] = np.random.uniform(-w, w, size=(input, output))
 	self.b[0] = 0	
-
+	# hidden layers
 	for i in xrange(1, len(self.layers)-1):
 	    input = self.layers[i]
 	    output = self.layers[i+1] 
 	    w = w_initial(input, output)
 	    self.W[i] = np.random.uniform(-w, w, size=(input, output))
 	    self.b[i] = 0
+	# output layer
+
+
 
     def compute_loss(self, X, y):
 	return self.loss_function(X,y)
