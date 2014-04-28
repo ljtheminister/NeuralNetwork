@@ -1,17 +1,17 @@
 import numpy as np
 from numpy import exp
 
-def logistic(self, x):
+def logistic(x):
     return (1.0 + exp(-x))**-1
 
 def logistic_gradient(x):
-    s = Logistic(x)
+    s = logistic(x)
     return s*(1-s)
 
-def linear(self, x, a, b):
-    return a*x + b
+def linear(x, a, b):
+    return a.dot(x)+b
 
-def linear_gradient(self, x, a, b):
+def linear_gradient(x, a, b):
     return a
 
 def tanh(x):
