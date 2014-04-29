@@ -4,8 +4,6 @@ from numpy import sqrt
 from activation_functions import *
 from cost_functions import *
 
-
-
 class NeuralNetwork:
     def __init__(self, X, y, layers, alpha=0.1, test_prop=0.9, seed_parameter=1, activation_function='logistic', loss_function='squared_loss', output_function='linear'):
 
